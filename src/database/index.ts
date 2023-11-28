@@ -4,7 +4,7 @@ export async function setupMongo(): Promise<void> {
 
     try{
         if(mongoose.connection.readyState === 1){
-            return
+            return;
         }
         console.log('Connecting to DB...')
 
