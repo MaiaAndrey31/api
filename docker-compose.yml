@@ -26,6 +26,9 @@ services:
       - ./:/home/app
       ports: 
       - '3131:3131'
+      networks:
+        - local
+
 networks:
   local:
      name: local 

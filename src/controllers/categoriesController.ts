@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { CategoriesSevice } from '../services/categoriesService';
 
 export class CategoriesController {
-  async create(req: Request, res: Response) {
+  async create(_: Request, res: Response) {
     const service = new CategoriesSevice();
 
     const result = await service.create();
