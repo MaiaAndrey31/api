@@ -9,7 +9,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: 'finance'
       MONGO_INITDB_ROOT_PASSWORD: 'finance'
     ports:
-    - '27017:27017'
+    - "27017:27017"
     networks:
       - local
 
@@ -25,7 +25,7 @@ services:
       volumes:
       - ./:/home/app
       ports: 
-      - '3131:3131'
+      - "3131:3131"
       networks:
         - local
 
