@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const CategorySchema = new mongoose.Schema(
-  { _id: String, title: String, color: String },
+  { title: String, color: String },
   { versionKey: false },
 );
 
