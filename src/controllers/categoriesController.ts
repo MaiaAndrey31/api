@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import { CategoriesRepository } from '../database/repositories/categoriesRepository';
 import { CategoryModel } from '../database/schemas/categorySchema';
@@ -9,13 +9,18 @@ export class CategoriesController {
   async create(
     req: Request<unknown, unknown, CreateCategoryDto>,
     res: Response,
+    next: NextFunction,
   ) {
-    const { title, color } = req.body;
-    const repository = new CategoriesRepository(CategoryModel);
-    const service = new CategoriesSevice(repository);
+    try {
+      const { title, color } = req.body;
+      const repository = new CategoriesRepository(CategoryModel);
+      const service = new CategoriesSevice(repository);
 
-    const result = await service.create({ title, color });
+      const result = await service.create({ title, color });
 
-    return res.status(201).json(result);
+      return res.status(201).json(result);
+    } catch (err) {
+      next(err);
+    }
   }
 }
