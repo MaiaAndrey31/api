@@ -21,4 +21,10 @@ export class CategoriesSevice {
 
     return createdCategory;
   }
+
+  async index(): Promise<Category[]> {
+    const categories = await this.CategoriesRepository.index();
+
+    return categories;
+  }
 }
