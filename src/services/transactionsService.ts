@@ -2,11 +2,11 @@ import { StatusCodes } from 'http-status-codes';
 
 import { CategoriesRepository } from '../database/repositories/categoriesRepository';
 import { TransactionRepository } from '../database/repositories/transactionRepossitory';
-import { CreateTransactionDTO } from '../dtos/trasactionsDto';
+import { CreateTransactionDTO } from '../dtos/transactionsDto';
 import { Transaction } from '../entities/transaction.entity';
 import { AppError } from '../errors/appError';
 
-export class TrasactionService {
+export class TransactionService {
   constructor(
     private transactionRepository: TransactionRepository,
     private categoriesRepository: CategoriesRepository,
