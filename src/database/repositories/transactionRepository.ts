@@ -1,4 +1,8 @@
-import { indexTransactionsDTO } from '../../dtos/transactionsDto';
+import {
+  getDashboardDTO,
+  indexTransactionsDTO,
+} from '../../dtos/transactionsDto';
+import { Balance } from '../../entities/balance.entity';
 import { Transaction } from '../../entities/transaction.entity';
 import { TransactionModel } from '../schemas/transactionSchema';
 
@@ -29,15 +33,20 @@ export class TransactionRepository {
     beginDate,
     endDate,
   }: indexTransactionsDTO): Promise<Transaction[]> {
-    const transaction = await this.model.find({
-      title: {
-        $regex: title,
-        options: 'i',
-      },
-      'category._id': categoryId,
-      date: {
-        $gte: beginDate,
-        $lte: endDate,
+    const whereParams: Record<string, unknown> = {
+      ...(title && { title: { $regex: title, $options: 'i' } }),
+      ...(categoryId && { 'category._id': categoryId }),
+    };
+
+    if (beginDate || endDate) {
+      whereParams.date = {
+        ...(beginDate && { $gte: beginDate }),
+        ...(endDate && { $lte: endDate }),
+      };
+    }
+    const transaction = await this.model.find(whereParams, undefined, {
+      sort: {
+        date: -1,
       },
     });
 
@@ -46,5 +55,56 @@ export class TransactionRepository {
     );
 
     return transactionMap;
+  }
+
+  async getBalance({ beginDate, endDate }: getDashboardDTO): Promise<Balance> {
+    const aggregate = this.model.aggregate<Balance>();
+    if (beginDate || endDate) {
+      aggregate.match({
+        date: {
+          ...(beginDate && { $gte: beginDate }),
+          ...(endDate && { $lte: endDate }),
+        },
+      });
+    }
+    const [result] = await aggregate
+
+      .project({
+        _id: 0,
+        income: {
+          $cond: [
+            {
+              $eq: ['$type', 'income'],
+            },
+            '$amount',
+            0,
+          ],
+        },
+        expense: {
+          $cond: [
+            {
+              $eq: ['$type', 'expense'],
+            },
+            '$amount',
+            0,
+          ],
+        },
+      })
+      .group({
+        _id: null,
+        incomes: {
+          $sum: '$income',
+        },
+        expenses: {
+          $sum: '$expense',
+        },
+      })
+      .addFields({
+        balance: {
+          $subtract: ['$incomes', '$expenses'],
+        },
+      });
+
+    return result;
   }
 }

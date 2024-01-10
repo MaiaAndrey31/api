@@ -4,8 +4,10 @@ import { CategoriesRepository } from '../database/repositories/categoriesReposit
 import { TransactionRepository } from '../database/repositories/transactionRepository';
 import {
   CreateTransactionDTO,
+  getDashboardDTO,
   indexTransactionsDTO,
 } from '../dtos/transactionsDto';
+import { Balance } from '../entities/balance.entity';
 import { Transaction } from '../entities/transaction.entity';
 import { AppError } from '../errors/appError';
 
@@ -45,5 +47,22 @@ export class TransactionService {
     const transactions = await this.transactionRepository.index(filters);
 
     return transactions;
+  }
+
+  async getDashboard({ beginDate, endDate }: getDashboardDTO) {
+    let balance = await this.transactionRepository.getBalance({
+      beginDate,
+      endDate,
+    });
+
+    if (!balance) {
+      balance = new Balance({
+        _id: null,
+        incomes: 0,
+        expenses: 0,
+        balance: 0,
+      });
+    }
+    return balance;
   }
 }

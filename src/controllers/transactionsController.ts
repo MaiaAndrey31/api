@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import {
   CreateTransactionDTO,
+  getDashboardDTO,
   indexTransactionsDTO,
 } from '../dtos/transactionsDto';
 import { TransactionService } from '../services/transactionsService';
@@ -43,6 +44,24 @@ export class TransactionController {
       const result = await this.TransactionService.index({
         title,
         categoryId,
+        beginDate,
+        endDate,
+      });
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getDashboard = async (
+    req: Request<unknown, unknown, unknown, getDashboardDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { beginDate, endDate } = req.query;
+      const result = await this.TransactionService.getDashboard({
         beginDate,
         endDate,
       });
