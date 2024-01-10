@@ -1,5 +1,5 @@
 import { CategoriesRepository } from '../database/repositories/categoriesRepository';
-import { TransactionRepository } from '../database/repositories/transactionRepossitory';
+import { TransactionRepository } from '../database/repositories/transactionRepository';
 import { CategoryModel } from '../database/schemas/categorySchema';
 import { TransactionModel } from '../database/schemas/transactionSchema';
 import { TransactionService } from '../services/transactionsService';
