@@ -3,7 +3,11 @@ import {
   indexTransactionsDTO,
 } from '../../dtos/transactionsDto';
 import { Balance } from '../../entities/balance.entity';
-import { Transaction } from '../../entities/transaction.entity';
+import { Expense } from '../../entities/expenses.entity';
+import {
+  Transaction,
+  TransactionType,
+} from '../../entities/transaction.entity';
 import { TransactionModel } from '../schemas/transactionSchema';
 
 export class TransactionRepository {
@@ -104,6 +108,39 @@ export class TransactionRepository {
           $subtract: ['$incomes', '$expenses'],
         },
       });
+
+    return result;
+  }
+
+  async getExpenses({
+    beginDate,
+    endDate,
+  }: getDashboardDTO): Promise<Expense[]> {
+    const aggregate = this.model.aggregate<Expense>();
+
+    const matchParams: Record<string, unknown> = {
+      type: TransactionType.EXPENSE,
+    };
+
+    if (beginDate || endDate) {
+      matchParams.date = {
+        ...(beginDate && { $gte: beginDate }),
+        ...(endDate && { $lte: endDate }),
+      };
+    }
+
+    const result = await aggregate.match(matchParams).group({
+      _id: '$caegory._id',
+      title: {
+        $first: '$category.title',
+      },
+      color: {
+        $first: '$category.color',
+      },
+      amount: {
+        $sum: '$amount',
+      },
+    });
 
     return result;
   }
