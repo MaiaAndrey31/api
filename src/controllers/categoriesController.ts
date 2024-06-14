@@ -4,11 +4,12 @@ import { z } from 'zod';
 
 import { CreateCategoryDto } from '../dtos/categoriesDto';
 import { CategoriesSevice } from '../services/categoriesService';
+import { BodyRequest } from './types';
 
 export class CategoriesController {
   constructor(private CategoriesService: CategoriesSevice) {}
   create = async (
-    req: Request<unknown, unknown, CreateCategoryDto>,
+    req: BodyRequest<CreateCategoryDto>,
     res: Response,
     next: NextFunction,
   ) => {

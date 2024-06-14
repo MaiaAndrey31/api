@@ -4,16 +4,18 @@ import { z } from 'zod';
 
 import {
   CreateTransactionDTO,
+  GetFinancialEvolutionDTO,
   getDashboardDTO,
   indexTransactionsDTO,
 } from '../dtos/transactionsDto';
 import { TransactionService } from '../services/transactionsService';
+import { BodyRequest, QueryRequest } from './types';
 
 export class TransactionController {
   constructor(private TransactionService: TransactionService) {}
 
   create = async (
-    req: Request<unknown, unknown, CreateTransactionDTO>,
+    req: BodyRequest<CreateTransactionDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -35,7 +37,7 @@ export class TransactionController {
   };
 
   index = async (
-    req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
+    req: QueryRequest<indexTransactionsDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -55,7 +57,7 @@ export class TransactionController {
   };
 
   getDashboard = async (
-    req: Request<unknown, unknown, unknown, getDashboardDTO>,
+    req: QueryRequest<getDashboardDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -64,6 +66,23 @@ export class TransactionController {
       const result = await this.TransactionService.getDashboard({
         beginDate,
         endDate,
+      });
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  getFinancialEvolution = async (
+    req: QueryRequest<GetFinancialEvolutionDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { year } = req.query;
+      const result = await this.TransactionService.getFinancialEvolution({
+        year,
       });
 
       return res.status(StatusCodes.OK).json(result);

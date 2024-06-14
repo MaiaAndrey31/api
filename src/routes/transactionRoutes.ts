@@ -4,6 +4,7 @@ import { TransactionController } from '../controllers/transactionsController';
 import {
   createTransactionSchema,
   getDashboardSchema,
+  getFinancialEvolutionSchema,
   indexTransactionSchema,
 } from '../dtos/transactionsDto';
 import { TransactionFactory } from '../factories/transactionsFactory';
@@ -40,4 +41,12 @@ transactionsRoutes.get(
     type: ParamsType.QUERY,
   }),
   controller.getDashboard,
+);
+transactionsRoutes.get(
+  '/financial-evolution',
+  validator({
+    schema: getFinancialEvolutionSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.getFinancialEvolution,
 );
